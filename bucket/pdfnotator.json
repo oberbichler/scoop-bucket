@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "description": "PDF viewer for pair-designing Typst documents with AI coding agents via MCP",
+    "homepage": "https://github.com/oberbichler/pdfnotator",
+    "license": "ISC",
+    "notes": "Install Typst to compile .typ files: scoop install main/typst",
+    "suggest": {
+        "Typst": "main/typst"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/oberbichler/pdfnotator/releases/download/v0.2.0/PDFnotator_0.2.0_x64-setup.exe#/dl.7z",
+            "hash": "49f6bf70ba59db4261452f426dd2266e741f7d16328f7d0c257b643dc7cded45"
+        }
+    },
+    "pre_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninstall.exe\" -Recurse -Force -ErrorAction SilentlyContinue",
+    "bin": "pdfnotator.exe",
+    "shortcuts": [
+        [
+            "pdfnotator.exe",
+            "PDFnotator"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/oberbichler/pdfnotator"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/oberbichler/pdfnotator/releases/download/v$version/PDFnotator_$version_x64-setup.exe#/dl.7z"
+            }
+        }
+    }
+}

@@ -1,0 +1,33 @@
+name: CI
+
+# Install every manifest with Scoop on Windows.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  install:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install Scoop
+        shell: pwsh
+        run: |
+          Invoke-RestMethod -Uri https://get.scoop.sh -OutFile install.ps1
+          .\install.ps1 -RunAsAdmin
+          Join-Path (Resolve-Path ~).Path "scoop\shims" >> $env:GITHUB_PATH
+      - name: Install the manifests
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          foreach ($m in Get-ChildItem bucket\*.json) {
+            $app = $m.BaseName
+            scoop install $m.FullName
+            if ($LASTEXITCODE) { throw "scoop install $app failed" }
+            $exe = (Get-Content $m.FullName | ConvertFrom-Json).bin
+            $path = Join-Path (scoop prefix $app) $exe
+            if (-not (Test-Path $path)) { throw "$path is missing" }
+            Get-ChildItem (scoop prefix $app)
+            scoop uninstall $app
+          }
